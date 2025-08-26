@@ -1,0 +1,133 @@
+/* Full screen center */
+.signup-container {
+  display: flex;
+  justify-content: center;   /* horizontal center */
+  align-items: center;       /* vertical center */
+  height: 100vh;             /* full screen height */
+  background: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+/* Form box */
+.signup-container form {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  width: 350px;
+}
+
+/* Heading */
+.signup-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Each form group */
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+/* Labels */
+.form-group label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #444;
+}
+
+/* Inputs */
+.form-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #28a745;
+  box-shadow: 0px 0px 4px rgba(40, 167, 69, 0.4);
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 10px;
+  background: #28a745; /* green for signup */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #1e7e34;
+}
+
+/* Login link */
+.signup-container p {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.signup-container a {
+  color: #28a745;
+  text-decoration: none;
+}
+
+.signup-container a:hover {
+  text-decoration: underline;
+}
+
+.eye-icon:hover {
+  color: #28a745;
+  cursor: pointer;
+}
+
+/* Error message */
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Disabled button state */
+button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: #6c757d;
+}
+
+.password-group {
+  position: relative;
+}
+
+.password-group input {
+  width: 100%;
+  padding-right: 40px; /* space for eye icon */
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 35px; /* adjust if needed */
+  cursor: pointer;
+  color: #555;
+  font-size: 18px;
+}
