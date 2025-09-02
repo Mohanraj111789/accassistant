@@ -11,6 +11,9 @@ function Home() {
   const [error, setError] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [formError, setFormError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isListening, setIsListening] = useState(false);
+  const [filteredUsers, setFilteredUsers] = useState([]);
 
   const fetchUsers = async () => {
     try {
@@ -88,6 +91,19 @@ function Home() {
     fetchUsers();
   }, []);
 
+  // Filter users based on search term
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredUsers(users);
+    } else {
+      const filtered = users.filter(user => 
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.phone.includes(searchTerm)
+      );
+      setFilteredUsers(filtered);
+    }
+  }, [users, searchTerm]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
@@ -158,6 +174,49 @@ function Home() {
     }
   };
 
+  // Voice search functionality
+  const startVoiceSearch = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Voice search is not supported in your browser. Please use Chrome or Edge.');
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      // Convert to lowercase and remove spaces
+      const processedText = transcript.toLowerCase().replace(/\s+/g, '');
+      setSearchTerm(processedText);
+      setIsListening(false);
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+      alert('Voice search failed. Please try again.');
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+  };
+
   if (loading) {
     return (
       <div className="home-container">
@@ -188,6 +247,42 @@ function Home() {
             </div>
           )}
         </div>
+        
+        {/* Search integrated in navbar */}
+        <div className="navbar-search">
+          <div className="search-container">
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button 
+              className={`voice-search-btn ${isListening ? 'listening' : ''}`}
+              onClick={startVoiceSearch}
+              disabled={isListening}
+              title="Voice Search"
+            >
+              {isListening ? '🎤' : '🎙️'}
+            </button>
+            {searchTerm && (
+              <button 
+                className="clear-search-btn"
+                onClick={clearSearch}
+                title="Clear Search"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          {searchTerm && (
+            <div className="search-results-info">
+              {filteredUsers.length} result(s)
+            </div>
+          )}
+        </div>
+        
         <div className="header-actions">
           <button className="dashboard-btn" onClick={() => window.location.href = '/dashboard'}>
             Dashboard
@@ -199,10 +294,14 @@ function Home() {
       </div>
 
       <div className="user-list">
-        {users && users.length > 0 ? (
-          users.map((user) => (
+        {filteredUsers && filteredUsers.length > 0 ? (
+          filteredUsers.map((user) => (
             <Card key={user.id} user={user} onUserDeleted={fetchUsers} />
           ))
+        ) : searchTerm ? (
+          <p>No users found matching "{searchTerm}". Try a different search term.</p>
+        ) : users && users.length > 0 ? (
+          <p>Use the search above to find specific users.</p>
         ) : (
           <p>No users found. Add your first user below!</p>
         )}
